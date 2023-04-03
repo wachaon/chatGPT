@@ -1,0 +1,22 @@
+{
+  "{A744AB21-E337-4A4C-A241-61BA4CC58C3A}": {
+    "source": "{\n  \"name\": \"chatgpt\",\n  \"version\": \"0.0.2\",\n  \"description\": \"chatGPT\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/wachaon/chatGPT.git\"\n  },\n  \"keywords\": [\n    \"chatGPT\"\n  ],\n  \"author\": \"wachaon\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/wachaon/chatGPT/issues\"\n  },\n  \"homepage\": \"https://github.com/wachaon/chatGPT#readme\"\n}",
+    "mapping": {},
+    "path": "{chatGPT}/package.json"
+  },
+  "{DB0C7FE3-A4B7-43F0-88A5-43529D13A451}": {
+    "source": "module.exports = function ChatGPT(apikey, options = {}) {\r\n    const Server = require('MSXML2.ServerXMLHTTP')\r\n    const url = 'https://api.openai.com/v1/chat/completions'\r\n    const token = 'Bearer ' + apikey\r\n    const model = 'gpt-3.5-turbo'\r\n\r\n    return function chat(user, params = {}) {\r\n        Server.open('POST', url, true)\r\n        Server.setRequestHeader('Content-Type', 'application/json')\r\n        Server.setRequestHeader('Authorization', token)\r\n\r\n        const { system, assistant } = Object.assign({}, options, params)\r\n        const messages = []\r\n        if (system != null) messages.push({ role: 'system', content: system })\r\n        if (assistant != null) messages.push({ role: 'assistant', content: assistant })\r\n        messages.push({ role: 'user', content: user })\r\n\r\n        Server.send(JSON.stringify({ model, messages }))\r\n\r\n        const State = ['UNINITIALIZED', 'LOADING', 'LOADED', 'INTERACTIVE', 'COMPLETED']\r\n        const spiner = ['|', '/', '-', '\\\\']\r\n        let count = 0\r\n        let state\r\n\r\n        while ((state = State[Server.readyState]) != 'COMPLETED') {\r\n            const progress = spiner[count % spiner.length]\r\n            console.weaklog('%s %s %s', user, progress, state)\r\n            WScript.Sleep(50)\r\n            count++\r\n        }\r\n        return JSON.parse(Server.responseText).choices[0].message.content\r\n    }\r\n}",
+    "mapping": {},
+    "path": "{chatGPT}/index.js"
+  },
+  "{85CD9544-656C-4B1F-9923-BD38A0DEF8CB}": {
+    "source": "MIT License\n\nCopyright (c) 2023 wachaon\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+    "mapping": {},
+    "path": "{chatGPT}/LICENSE"
+  },
+  "{33640FA7-A0EA-48AA-BD40-4DEBAE3C0EBC}": {
+    "source": "# chatGPT\n\nchatGPT と対話します。\n\n## usage\n\n事前に *API key* を出くする必要があります。\n\n```javascript\nlet ChatGPT\ntry {\n    ChatGPT = require('ChatGPT')\n} catch (e) {\n    ChatGPT = require('./index')\n}\n\nconst { resolve, bubbleUp } = require('pathname')\nconst { readFileSync, existsFileSync } = require('filesystem')\n\nlet json\nbubbleUp(process.cwd(), (path) => {\n    const spec = resolve(path, 'account.json')\n    if (!existsFileSync(spec)) return false\n    json = JSON.parse(readFileSync(spec, 'auto'))\n    return 'open_ai' in json\n})\n\nconst apikey = json.open_ai\n\nconst gpt = ChatGPT(apikey, { system: 'あなたは優秀な先生です。' })\n\nconsole.log(() => gpt('2桁の掛け算を効率的に習得するには？'))\n```",
+    "mapping": {},
+    "path": "{chatGPT}/README.md"
+  }
+}
