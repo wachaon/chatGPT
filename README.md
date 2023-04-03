@@ -4,7 +4,7 @@ chatGPT と対話します。
 
 ## usage
 
-事前に *API key* を出くする必要があります。
+事前に *API key* を取得する必要があります。
 
 ```javascript
 let ChatGPT
